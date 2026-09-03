@@ -3,7 +3,6 @@
 Find everyday indoor objects from a phone walk: camera keyframes + IMU + Wi-Fi RSSI, then search in a web UI (SigLIP, YOLO, LLaVA, Neo4j).
 
 - Demo video: https://youtu.be/o1gum_NE7Z8
-- Repository: https://github.com/Vickyy2525/Wi-Fi-Anchored-Multimodal-Fusion-for-Accessible-Indoor-Item-Finding
 
 ## Requirements
 
