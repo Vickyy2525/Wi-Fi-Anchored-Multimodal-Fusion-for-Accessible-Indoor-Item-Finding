@@ -1,0 +1,162 @@
+[
+  {
+    "id": "door",
+    "label": "門",
+    "queries": ["door", "大門", "wooden door", "室內門", "entrance door", "門"],
+    "marker": "s",
+    "color": "#8B4513",
+    "role": "primary",
+    "enabled": true,
+    "score_threshold": 0.12
+  },
+  {
+    "id": "window",
+    "label": "窗戶",
+    "queries": ["window", "窗戶", "glass window", "curtained window"],
+    "marker": "D",
+    "color": "#3498DB",
+    "role": "secondary",
+    "enabled": true,
+    "score_threshold": 0.12
+  },
+  {
+    "id": "refrigerator",
+    "label": "冰箱",
+    "queries": ["refrigerator", "fridge", "冰箱", "silver refrigerator", "double door fridge"],
+    "marker": "h",
+    "color": "#7F8C8D",
+    "role": "primary",
+    "enabled": true,
+    "score_threshold": 0.095
+  },
+  {
+    "id": "air_conditioner",
+    "label": "冷氣",
+    "queries": ["air conditioner", "AC unit", "冷氣機", "冷氣", "wall air conditioner"],
+    "marker": "^",
+    "color": "#1ABC9C",
+    "role": "primary",
+    "enabled": true,
+    "score_threshold": 0.10
+  },
+  {
+    "id": "washing_machine",
+    "label": "洗衣機",
+    "queries": ["washing machine", "洗衣機", "laundry machine", "front load washer"],
+    "marker": "H",
+    "color": "#5C6BC0",
+    "role": "primary",
+    "enabled": true,
+    "score_threshold": 0.10
+  },
+  {
+    "id": "stove",
+    "label": "瓦斯爐／廚房爐具",
+    "queries": ["kitchen stove", "gas stove", "瓦斯爐", "爐台", "cooktop"],
+    "marker": "P",
+    "color": "#E67E22",
+    "role": "primary",
+    "enabled": true,
+    "score_threshold": 0.10
+  },
+  {
+    "id": "water_dispenser",
+    "label": "飲水機",
+    "queries": ["water dispenser", "飲水機", "water cooler", "bottle water dispenser"],
+    "marker": "v",
+    "color": "#039BE5",
+    "role": "primary",
+    "enabled": true,
+    "score_threshold": 0.10
+  },
+  {
+    "id": "television",
+    "label": "電視",
+    "queries": ["television", "TV", "flat screen TV", "電視", "living room TV"],
+    "marker": "X",
+    "color": "#455A64",
+    "role": "secondary",
+    "enabled": true,
+    "score_threshold": 0.11
+  },
+  {
+    "id": "wardrobe",
+    "label": "衣櫃",
+    "queries": ["wardrobe", "closet", "衣櫃", "衣櫥", "wooden wardrobe"],
+    "marker": "p",
+    "color": "#6D4C41",
+    "role": "secondary",
+    "enabled": true,
+    "score_threshold": 0.11
+  },
+  {
+    "id": "bookshelf",
+    "label": "書櫃",
+    "queries": ["bookshelf", "bookcase", "書櫃", "書架"],
+    "marker": "|",
+    "color": "#795548",
+    "role": "secondary",
+    "enabled": true,
+    "score_threshold": 0.11
+  },
+  {
+    "id": "sofa",
+    "label": "沙發",
+    "queries": ["sofa", "couch", "沙發", "living room sofa"],
+    "marker": "o",
+    "color": "#8E44AD",
+    "role": "secondary",
+    "enabled": true,
+    "score_threshold": 0.11
+  },
+  {
+    "id": "desk",
+    "label": "書桌",
+    "queries": ["desk", "wooden desk", "書桌", "辦公桌"],
+    "marker": "o",
+    "color": "#D35400",
+    "role": "secondary",
+    "enabled": true,
+    "score_threshold": 0.11
+  },
+  {
+    "id": "cabinet",
+    "label": "櫥櫃",
+    "queries": ["cabinet", "kitchen cabinet", "櫥櫃", "收納櫃", "sideboard"],
+    "marker": "s",
+    "color": "#A1887F",
+    "role": "secondary",
+    "enabled": true,
+    "score_threshold": 0.11
+  },
+  {
+    "id": "sink",
+    "label": "洗手台",
+    "queries": ["bathroom sink", "洗手台", "washbasin", "kitchen sink", "水槽"],
+    "marker": "d",
+    "color": "#4DD0E1",
+    "role": "secondary",
+    "enabled": true,
+    "score_threshold": 0.11
+  },
+  {
+    "id": "toilet",
+    "label": "馬桶",
+    "queries": ["toilet", "馬桶", "bathroom toilet"],
+    "marker": "8",
+    "color": "#80CBC4",
+    "role": "secondary",
+    "enabled": true,
+    "score_threshold": 0.11
+  },
+  {
+    "id": "stairs",
+    "label": "樓梯",
+    "queries": ["stairs", "staircase", "樓梯", "indoor stairs"],
+    "marker": "*",
+    "color": "#F39C12",
+    "role": "primary",
+    "enabled": true,
+    "score_threshold": 0.12
+  }
+]

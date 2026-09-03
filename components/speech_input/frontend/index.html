@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    html, body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 8px 8px 10px;
+      color: #111827 !important;
+      background: #ffffff !important;
+      box-sizing: border-box;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    button {
+      font-size: 1rem !important;
+      padding: 10px 16px !important;
+      border-radius: 8px !important;
+      cursor: pointer !important;
+      font-weight: 700 !important;
+      min-width: 130px !important;
+      min-height: 44px !important;
+      line-height: 1.2 !important;
+      -webkit-text-fill-color: currentColor !important;
+    }
+    #startBtn {
+      background: #1565C0 !important;
+      color: #ffffff !important;
+      border: 2px solid #0D47A1 !important;
+    }
+    #startBtn:disabled { opacity: 0.55 !important; cursor: not-allowed !important; }
+    #stopBtn {
+      background: #FFF3E0 !important;
+      color: #BF360C !important;
+      border: 2px solid #E65100 !important;
+    }
+    #stopBtn:disabled {
+      opacity: 0.45 !important;
+      cursor: not-allowed !important;
+      background: #f5f5f5 !important;
+      color: #9e9e9e !important;
+      border-color: #bdbdbd !important;
+    }
+    #status {
+      margin: 8px 0 0;
+      font-size: 0.92rem;
+      min-height: 1.2em;
+      color: #374151 !important;
+    }
+    #result {
+      font-size: 1.05rem;
+      font-weight: 700;
+      word-break: break-word;
+      color: #0a0a0a !important;
+      background: #E3F2FD;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid #90CAF9;
+      margin-top: 6px;
+    }
+    #result:empty { display: none; margin: 0; padding: 0; border: none; }
+  </style>
+</head>
+<body>
+  <div class="row">
+    <button type="button" id="startBtn">Start</button>
+    <button type="button" id="stopBtn" disabled>Stop</button>
+  </div>
+  <p id="status"></p>
+  <p id="result"></p>
+
+  <script>
+    const Streamlit = {
+      RENDER_EVENT: "streamlit:render",
+      events: {
+        _handlers: {},
+        addEventListener(t, fn) {
+          (this._handlers[t] = this._handlers[t] || []).push(fn);
+        },
+        dispatch(t, detail) {
+          (this._handlers[t] || []).forEach((fn) => fn({ detail }));
+        },
+      },
+      setComponentReady() {
+        window.parent.postMessage({
+          isStreamlitMessage: true,
+          type: "streamlit:componentReady",
+          apiVersion: 1,
+        }, "*");
+      },
+      setFrameHeight(h) {
+        window.parent.postMessage({
+          isStreamlitMessage: true,
+          type: "streamlit:setFrameHeight",
+          height: h,
+        }, "*");
+      },
+      setComponentValue(value) {
+        window.parent.postMessage({
+          isStreamlitMessage: true,
+          type: "streamlit:setComponentValue",
+          value: value,
+          dataType: "json",
+        }, "*");
+      },
+    };
+
+    window.addEventListener("message", (event) => {
+      const data = event.data;
+      if (!data || !data.isStreamlitMessage) return;
+      if (data.type === "streamlit:render") {
+        Streamlit.events.dispatch(Streamlit.RENDER_EVENT, data);
+      }
+    });
+
+    const startBtn = document.getElementById("startBtn");
+    const stopBtn = document.getElementById("stopBtn");
+    const statusEl = document.getElementById("status");
+    const resultEl = document.getElementById("result");
+
+    const DEFAULT_MSGS = {
+      idle_hint: "Press Start",
+      requesting_mic: "Requesting microphone…",
+      recording: "Recording…",
+      done: "Done!",
+      no_speech: "No speech detected.",
+      mic_blocked: "Microphone blocked.",
+      browser_unsupported: "Use Chrome or Edge.",
+      stopped: "Stopped.",
+      no_sound: "No speech heard.",
+      error_prefix: "Error: ",
+      start_fail_prefix: "Cannot start: ",
+    };
+
+    let rec = null;
+    let finalText = "";
+    let args = { lang: "zh-TW", start_label: "Start", stop_label: "Stop", messages: {} };
+
+    function msgs() {
+      return Object.assign({}, DEFAULT_MSGS, args.messages || {});
+    }
+
+    function frameHeight() {
+      return Math.max(88, document.body.scrollHeight + 8);
+    }
+
+    function resize() {
+      Streamlit.setFrameHeight(frameHeight());
+    }
+
+    function setLabels() {
+      const m = msgs();
+      startBtn.textContent = args.start_label || "Start";
+      stopBtn.textContent = args.stop_label || "Stop";
+      if (!rec) statusEl.textContent = m.idle_hint || args.idle_hint || "Press Start";
+    }
+
+    function resetButtons() {
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+      setLabels();
+      resize();
+    }
+
+    async function ensureMicrophone() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return true;
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach((track) => track.stop());
+        return true;
+      } catch (_) {
+        statusEl.textContent = msgs().mic_blocked;
+        resize();
+        return false;
+      }
+    }
+
+    Streamlit.events.addEventListener(Streamlit.RENDER_EVENT, (event) => {
+      const prevLang = args.lang;
+      args = Object.assign({}, args, event.detail.args || {});
+      if (typeof args.messages === "string") {
+        try { args.messages = JSON.parse(args.messages); } catch (_) { args.messages = {}; }
+      }
+      if (rec && prevLang && args.lang && prevLang !== args.lang) {
+        try { rec.abort(); } catch (_) {}
+        rec = null;
+        finalText = "";
+        resultEl.textContent = "";
+      }
+      setLabels();
+      resize();
+    });
+
+    setLabels();
+    Streamlit.setComponentReady();
+    resize();
+    if (window.ResizeObserver) new ResizeObserver(resize).observe(document.body);
+
+    startBtn.addEventListener("click", async () => {
+      const m = msgs();
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) {
+        statusEl.textContent = m.browser_unsupported;
+        resize();
+        return;
+      }
+
+      startBtn.disabled = true;
+      statusEl.textContent = m.requesting_mic;
+      resize();
+
+      if (!(await ensureMicrophone())) {
+        resetButtons();
+        return;
+      }
+
+      if (rec) {
+        try { rec.abort(); } catch (_) {}
+        rec = null;
+      }
+
+      finalText = "";
+      resultEl.textContent = "";
+      rec = new SR();
+      rec.lang = args.lang || "zh-TW";
+      rec.continuous = true;
+      rec.interimResults = true;
+
+      rec.onresult = (ev) => {
+        let interim = "";
+        for (let i = 0; i < ev.results.length; i++) {
+          const chunk = ev.results[i][0].transcript;
+          if (ev.results[i].isFinal) finalText += chunk;
+          else interim += chunk;
+        }
+        const show = (finalText + interim).trim();
+        resultEl.textContent = show;
+        if (show) Streamlit.setComponentValue(show);
+        resize();
+      };
+
+      rec.onerror = (ev) => {
+        const err = ev.error || "unknown";
+        if (err === "not-allowed") statusEl.textContent = m.mic_blocked;
+        else if (err === "no-speech") statusEl.textContent = m.no_sound;
+        else if (err === "aborted") statusEl.textContent = m.stopped;
+        else statusEl.textContent = m.error_prefix + err;
+        resetButtons();
+      };
+
+      rec.onend = () => {
+        resetButtons();
+        const out = (finalText || resultEl.textContent || "").trim();
+        statusEl.textContent = out ? m.done : m.no_speech;
+        Streamlit.setComponentValue(out);
+        resize();
+      };
+
+      try {
+        rec.start();
+        stopBtn.disabled = false;
+        statusEl.textContent = m.recording;
+        resize();
+      } catch (e) {
+        statusEl.textContent = m.start_fail_prefix + e.message;
+        resetButtons();
+      }
+    });
+
+    stopBtn.addEventListener("click", () => {
+      if (rec) {
+        try { rec.stop(); } catch (_) { resetButtons(); }
+      }
+    });
+  </script>
+</body>
+</html>

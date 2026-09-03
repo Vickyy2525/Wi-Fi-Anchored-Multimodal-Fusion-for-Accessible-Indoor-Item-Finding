@@ -1,0 +1,20 @@
+{
+  "emergency_contacts": [
+    {
+      "name": "家人範例",
+      "phone": "+886912345678",
+      "email": "family@example.com"
+    }
+  ],
+  "medications": [
+    {
+      "name": "血壓藥",
+      "times": ["08:00", "20:00"],
+      "last_taken": null
+    }
+  ],
+  "notify_channels": {
+    "email": true,
+    "sms": true
+  }
+}

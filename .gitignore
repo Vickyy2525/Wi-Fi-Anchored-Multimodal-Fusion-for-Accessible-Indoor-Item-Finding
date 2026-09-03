@@ -1,0 +1,26 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+.env
+*.dylib
+*.so
+
+# Local / generated
+config/care_settings.local.json
+data/staging/
+data/media/
+streamlit_results/
+landmarks_cache.json
+yolov8n.pt
+
+# Papers and extra writeups (do not publish)
+docs/
+*.tex
+*.pdf
+ComSoc.pdf
+*.aux
+*.log
+*.out
+*.toc

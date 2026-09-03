@@ -1,0 +1,45 @@
+# ============================================================
+# 多模態空間記憶尋物系統 — Python 依賴
+# macOS (Ollama) 與 Windows (Mock) 共用同一份 requirements
+# ============================================================
+
+# --- 核心深度學習框架 ---
+torch
+torchvision
+
+# --- 視覺特徵 (SigLIP) ---
+transformers
+sentencepiece
+protobuf
+
+# --- 物件偵測 (YOLOv8) ---
+ultralytics
+
+# --- 數學運算與相似度比對 ---
+numpy
+pandas
+scikit-learn
+
+# --- 記憶圖形 ---
+networkx
+
+# --- 影像處理、HTTP、環境變數 ---
+Pillow
+requests
+python-dotenv
+
+# --- Web Demo 介面 (Streamlit) ---
+streamlit
+
+# --- 軌跡視覺化 ---
+matplotlib
+
+# --- 即時 Ingest Server ---
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+
+# --- Neo4j（可選；未啟動時使用 FileGraphStore）---
+neo4j
+
